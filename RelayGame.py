@@ -31,53 +31,53 @@ class WordRelayGame:
 
         while True:
             current_player = self.players[current_player_index]
-            if self.scores[current_player] <= 0:
-                print(f"{current_player} 점수가 0 이하입니다. 게임을 종료합니다.")
+            if self.scores[current_player] <= 0:        # 플레이어 점수가 0 점이면 게임 종료
+                print(f"{current_player} 점수가 0 이하입니다. 게임에 패배하셨습니다.")
                 return
 
             input_word = input(f"플레이어 [{current_player}], 단어를 입력해 주세요 [현재점수 {self.scores[current_player]}]: ")
 
-            if input_word == "ㅈㅈ":
+            if input_word == "ㅈㅈ":      # ㅈㅈ를 치면 게임 종료 : 1차확인
                 reconfirm = input("정말로 게임을 포기하시겠습니까? [확인 1]: ")
-                if reconfirm == '1':
+                if reconfirm == '1':        # 2차확인 : 1누르면 게임 종료
                     print(f"Game over. 플레이어 [{current_player}]님이 기권하셨습니다.")
                     return
-                else:
+                else:       # 1 말고 다른 단어를 입력한다면
                     print("올바른 선택이 아닙니다.")
                     continue
 
-            if not self.is_korean_word(input_word):
+            if not self.is_korean_word(input_word):     # 규칙 1 어길 시 : 한글 입력만 가능
                 print("한글만 입력 가능합니다. [규칙 1 위배]")
                 if previous_word is not None:
                     self.scores[current_player] -= 1
                 continue
 
-            elif len(input_word) >= 10:
+            elif len(input_word) >= 10:     # 규칙 2 어길 시 : 단어수 제한 10
                 print("10자 미만의 단어를 입력해 주세요. [규칙 2 위배]")
                 if previous_word is not None:
                     self.scores[current_player] -= 1
                 continue
-            elif input_word in self.used_words:
+            elif input_word in self.used_words:     # 규칙 3 어길 시 : 중첩 단어 쓸시
                 print("중첩 된 단어는 쓰실 수 없습니다. [규칙 3 위배]")
                 if previous_word is not None:
                     self.scores[current_player] -= 1
                 continue
 
-            if previous_word is None:   # 플레이어 첫턴
+            if previous_word is None:   # 플레이어 첫턴 None
                 previous_word = input_word
-            elif input_word[0] == previous_word[-1]:
+            elif input_word[0] == previous_word[-1]:    # 두번째 턴, 끝말잇기 룰에 맞는지 확인
                 self.used_words.append(input_word)
                 previous_word = input_word
                 print(f"현재 단어: {input_word}")
 
-                # 올바른 단어를 입력하면 1점 증가
+                # 끝말잇기 룰에 맞게 입력하면 1점 증가
                 self.scores[current_player] += 1
                 print(f"플레이어 [{current_player}]의 점수: {self.scores[current_player]}")
-            else:
+            else:   # 룰에 어긋나는 경우
                 print("끝말있기 룰에 어긋납니다.")
                 self.scores[current_player] -= 1
 
-            # 다음 플레이어로 넘어가기 위해 나머지 처리
+            # 다음 플레이어로 넘어가기 위해 나머지 처리 : 1,2,3
             current_player_index = (current_player_index + 1) % len(self.players)
 
 
